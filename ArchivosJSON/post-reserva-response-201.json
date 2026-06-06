@@ -1,0 +1,12 @@
+{
+  "Id_reserva": 12,
+  "usuario_id": 467,
+  "recurso_id": 39,
+  "fecha": "2026-03-01",
+  "hora_inicio": "12:30:00",
+  "hora_fin": "20:00:00",
+  "coste": 67.00,
+  "numero_plazas": 6,
+  "motivo": "Planificaión de la presentación del proyecto.",
+  "observaciones": "Necesitamos organizar el espacio para la presentación del proyecto, por lo que requerimos reservar el recurso durante ese horario.Necesitamos de organizar el espacio para la presentación del proyecto, por lo que requerimos reservar el recurso durante ese horario."
+}
