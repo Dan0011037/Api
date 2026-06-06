@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rick and Morty API - Swagger UI</title>
+  <link rel="stylesheet" type="text/css" href="./swagger-ui-dist/swagger-ui.css" />
+  <link rel="icon" type="image/png" href="./swagger-ui-dist/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="./swagger-ui-dist/favicon-16x16.png" sizes="16x16" />
+  <style>
+    html
+    {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+    *,
+    *:before,
+    *:after
+    {
+      box-sizing: inherit;
+    }
+
+    body
+    {
+      margin:0;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+<div id="swagger-ui"></div>
+
+<script src="./swagger-ui-dist/swagger-ui-bundle.js" charset="UTF-8"> </script>
+<script src="./swagger-ui-dist/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+<script>
+  window.onload = function() {
+    // Begin Swagger UI call region
+    const ui = SwaggerUIBundle({
+      spec: {
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API de Gestión de Reservas - Proyecto Intermodular (DAW)",
+    "description": "Especificación de la API REST para el control y gestión de reservas de recursos y salas.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api/v1",
+      "description": "Servidor de desarrollo local"
+    }
+  ],
+  "paths": {
+    "/reservas": {
+      "get": {
+        "summary": "Obtener el listado de reservas",
+        "description": "Devuelve la lista de todas las reservas del usuario autenticado en el sistema.",
+        "responses": {
+          "200": {
+            "description": "Listado de reservas devuelto con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reserva"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear una nueva reserva",
+        "description": "Registra una nueva solicitud de reserva de un recurso.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reserva creada correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reserva"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error de validación en los datos de entrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reservas/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Identificador único numérico de la reserva.",
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar una reserva específica",
+        "description": "Devuelve el detalle completo de una única reserva mediante su ID.",
+        "responses": {
+          "200": {
+            "description": "Detalle de la reserva encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reserva"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "La reserva especificada no existe."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar o cancelar una reserva",
+        "description": "Borra definitivamente la reserva del sistema a través de su ID.",
+        "responses": {
+          "204": {
+            "description": "Reserva eliminada con éxito (sin contenido en la respuesta)."
+          },
+          "404": {
+            "description": "La reserva no ha sido encontrada."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Reserva": {
+        "type": "object",
+        "properties": {
+          "Id_reserva": {
+            "type": "integer",
+            "example": 12
+          },
+          "usuario_id": {
+            "type": "integer",
+            "example": 42
+          },
+          "recurso_id": {
+            "type": "integer",
+            "example": 39
+          },
+          "recurso_nombre": {
+            "type": "string",
+            "example": "Sala de Reuniones Norte"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-03-01"
+          },
+          "hora_inicio": {
+            "type": "string",
+            "example": "12:30:00"
+          },
+          "hora_fin": {
+            "type": "string",
+            "example": "20:00:00"
+          },
+          "coste": {
+            "type": "number",
+            "format": "float",
+            "example": 67
+          },
+          "numero_plazas": {
+            "type": "integer",
+            "example": 6
+          },
+          "motivo": {
+            "type": "string",
+            "example": "Planificaión de la presentación del proyecto."
+          },
+          "observaciones": {
+            "type": "string",
+            "nullable": true,
+            "example": "Necesitamos organizar el espacio para la presentación del proyecto, por lo que requerimos reservar el recurso durante ese horario.Necesitamos de organizar el espacio para la presentación del proyecto, por lo que requerimos reservar el recurso durante ese horario."
+          }
+        }
+      },
+      "ReservaInput": {
+        "type": "object",
+        "required": [
+          "recurso_id",
+          "fecha",
+          "hora_inicio",
+          "hora_fin",
+          "numero_plazas",
+          "motivo"
+        ],
+        "properties": {
+          "recurso_id": {
+            "type": "integer",
+            "example": 39
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-03-01"
+          },
+          "hora_inicio": {
+            "type": "string",
+            "example": "12:30:00"
+          },
+          "hora_fin": {
+            "type": "string",
+            "example": "20:00:00"
+          },
+          "numero_plazas": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 6
+          },
+          "motivo": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "Planificaión de la presentación del proyecto."
+          },
+          "observaciones": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true,
+            "example": "Necesitamos organizar el espacio para la presentación del proyecto, por lo que requerimos reservar el recurso durante ese horario."
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Datos de entrada inválidos"
+          },
+          "detalles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "campo": {
+                  "type": "string",
+                  "example": "fecha"
+                },
+                "mensaje": {
+                  "type": "string",
+                  "example": "La fecha seleccionada no puede ser anterior al día de hoy."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}, // Path to your OpenAPI YAML file
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl
+      ],
+      layout: "StandaloneLayout"
+    });
+    // End Swagger UI call region
+
+    window.ui = ui;
+  };
+</script>
+</body>
+</html>
